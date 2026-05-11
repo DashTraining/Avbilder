@@ -1,0 +1,36 @@
+trigger:
+  branches:
+    include:
+      - main
+
+variables:
+  azureServiceConnection: 'sc-avbilder-azure'
+  adminAppName: 'app-avbilder-admin-weu'
+
+pool:
+  vmImage: 'windows-latest'
+
+steps:
+- checkout: self
+
+- task: UseDotNet@2
+  displayName: 'Install .NET SDK 8'
+  inputs:
+    packageType: 'sdk'
+    version: '8.x'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Publish admin app'
+  inputs:
+    command: 'publish'
+    projects: 'Avbilder.Admin.csproj'
+    arguments: '--configuration Release --output $(Build.ArtifactStagingDirectory)/publish'
+    zipAfterPublish: true
+
+- task: AzureWebApp@1
+  displayName: 'Deploy admin App Service'
+  inputs:
+    azureSubscription: '$(azureServiceConnection)'
+    appType: 'webApp'
+    appName: '$(adminAppName)'
+    package: '$(Build.ArtifactStagingDirectory)/publish/*.zip'

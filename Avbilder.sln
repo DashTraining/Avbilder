@@ -1,0 +1,60 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "site-admin", "site-admin", "{B6B1BB69-2295-5F35-26BF-9684B951DF88}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "site-user", "site-user", "{78881301-B44F-CE0D-32E7-764BFC32BAF4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avbilder.Admin", "site-admin\Avbilder.Admin.csproj", "{95808287-02E3-D6AA-459D-CD96EC76190B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "api", "api", "{1F8ACE5F-E404-EBE7-DB7F-6BE11F0B812D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avbilder.Api", "site-user\api\Avbilder.Api\Avbilder.Api.csproj", "{A05B6229-5FDA-B995-82DB-5369EED4D3A8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Avbilder.Api (1)", "Avbilder.Api (1)", "{F348C339-F779-A9AF-2F0D-F3B6C6513AF2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "obj", "obj", "{0AC0409E-689A-F399-FA40-E983E1D6BD7C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Release", "Release", "{414E9BC3-0A49-9A27-D3B7-A4CE933326E3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "net8.0", "net8.0", "{0A95FEEA-26F3-1AB3-688D-C61255894184}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkerExtensions", "site-user\api\Avbilder.Api\obj\Release\net8.0\WorkerExtensions\WorkerExtensions.csproj", "{23586313-ABE5-A70F-2FD8-0F49CA89E42B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{95808287-02E3-D6AA-459D-CD96EC76190B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95808287-02E3-D6AA-459D-CD96EC76190B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95808287-02E3-D6AA-459D-CD96EC76190B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95808287-02E3-D6AA-459D-CD96EC76190B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A05B6229-5FDA-B995-82DB-5369EED4D3A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A05B6229-5FDA-B995-82DB-5369EED4D3A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A05B6229-5FDA-B995-82DB-5369EED4D3A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A05B6229-5FDA-B995-82DB-5369EED4D3A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23586313-ABE5-A70F-2FD8-0F49CA89E42B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23586313-ABE5-A70F-2FD8-0F49CA89E42B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23586313-ABE5-A70F-2FD8-0F49CA89E42B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23586313-ABE5-A70F-2FD8-0F49CA89E42B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{95808287-02E3-D6AA-459D-CD96EC76190B} = {B6B1BB69-2295-5F35-26BF-9684B951DF88}
+		{1F8ACE5F-E404-EBE7-DB7F-6BE11F0B812D} = {78881301-B44F-CE0D-32E7-764BFC32BAF4}
+		{A05B6229-5FDA-B995-82DB-5369EED4D3A8} = {1F8ACE5F-E404-EBE7-DB7F-6BE11F0B812D}
+		{F348C339-F779-A9AF-2F0D-F3B6C6513AF2} = {1F8ACE5F-E404-EBE7-DB7F-6BE11F0B812D}
+		{0AC0409E-689A-F399-FA40-E983E1D6BD7C} = {F348C339-F779-A9AF-2F0D-F3B6C6513AF2}
+		{414E9BC3-0A49-9A27-D3B7-A4CE933326E3} = {0AC0409E-689A-F399-FA40-E983E1D6BD7C}
+		{0A95FEEA-26F3-1AB3-688D-C61255894184} = {414E9BC3-0A49-9A27-D3B7-A4CE933326E3}
+		{23586313-ABE5-A70F-2FD8-0F49CA89E42B} = {0A95FEEA-26F3-1AB3-688D-C61255894184}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D9AFA524-2451-40E1-BE43-997A380E908A}
+	EndGlobalSection
+EndGlobal

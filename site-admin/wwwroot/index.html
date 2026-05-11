@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Avbilder Admin</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <strong>Avbilder Admin</strong>
+      <span id="adminIdentity">Checking sign-in...</span>
+    </div>
+    <a href="/.auth/logout">Sign out</a>
+  </header>
+
+  <main>
+    <section class="summary">
+      <div>
+        <span>Registrations</span>
+        <strong id="registrationCount">-</strong>
+      </div>
+      <div>
+        <span>Customers</span>
+        <strong id="userCount">-</strong>
+      </div>
+      <div>
+        <span>Ready previews</span>
+        <strong id="readyCount">-</strong>
+      </div>
+    </section>
+
+    <nav class="tabs" aria-label="Admin views">
+      <button class="active" data-view="registrations">Registrations</button>
+      <button data-view="users">Users</button>
+      <button data-view="calendar">Calendar</button>
+    </nav>
+
+    <section id="registrations" class="view active">
+      <div class="toolbar">
+        <input id="registrationFilter" placeholder="Filter by email, registration ID, status, or session">
+      </div>
+      <div id="registrationRows" class="rows"></div>
+    </section>
+
+    <section id="users" class="view">
+      <div id="userRows" class="rows"></div>
+    </section>
+
+    <section id="calendar" class="view">
+      <div id="calendarRows" class="rows"></div>
+    </section>
+  </main>
+
+  <dialog id="uploadDialog">
+    <form method="dialog" class="dialog-shell">
+      <button class="icon-button" value="cancel" aria-label="Close">x</button>
+      <h2>Upload previews</h2>
+      <p id="uploadContext" class="muted"></p>
+      <div id="dropZone" class="drop-zone">
+        <strong>Drop JPEG previews here</strong>
+        <span>or click to choose files</span>
+        <input id="fileInput" type="file" accept="image/jpeg" multiple>
+      </div>
+      <div id="fileList" class="file-list"></div>
+      <menu>
+        <button value="cancel" class="secondary">Cancel</button>
+        <button id="uploadButton" type="button">Upload and publish</button>
+      </menu>
+      <div id="uploadStatus" hidden></div>
+    </form>
+  </dialog>
+
+  <script src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+# Build output
+bin/
+obj/
+**/bin/
+**/obj/
+TestResults/
+artifacts/
+publish/
+*.nupkg
+/infra/main.json
+/infra/admin-app.json
+/infra/automation-cleanup.json
+
+# .NET and Azure Functions local state
+local.settings.json
+**/local.settings.json
+appsettings.Development.json
+appsettings.Local.json
+appsettings.Production.json
+appsettings.Staging.json
+appsettings.*.local.json
+*.user
+*.suo
+*.rsuser
+*.pubxml
+*.publishsettings
+
+# Secrets and environment files
+.env
+.env.*
+!.env.example
+*.secret.json
+secrets.json
+*.pfx
+*.p12
+*.pem
+*.key
+*.cer
+*.crt
+*.csr
+
+# Azure tooling local state
+.azure/*/.env
+.azure/*/config.json
+.azure/*/.env.local
+.azure/*/.env.*.local
+azureauth.json
+azureProfile.json
+
+# Static Web Apps and Functions tooling
+.swa/
+*.swa-cli.config.json
+
+# Node/frontend dependency output, if tooling is added later
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# PowerShell and script output
+*.ps1xml
+*.clixml
+*.transcript
+transcript*.txt
+*.log
+*.etl
+*.dmp
+
+# Local emulators
+__azurite_db*
+*.azurite
+
+# IDE/editor state
+.vs/
+.vscode/.ropeproject/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Demo/private data that should never be published by accident
+/demo-narrative.md
+/publishing.md
+/diagrams/
+preview-data/
+previews/
+uploads/
+exports/
+downloads/
+*.azcopy
+*.bak
+*.backup
+
+# Local nested repository used for publishing the customer site to Azure DevOps.
+# Keep this metadata locally, but do not publish it from the top-level repo.
+/site-user/.git/
+
+# Local build output for the customer site, which is published separately from the top-level repo.
+# This is not needed in the top-level repo and can be large, so we ignore it here.
+# The source files for the customer site are still included in the repo and published as expected, since we only ignore the build output folder.
+/site-user/site/
