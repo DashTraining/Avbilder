@@ -105,3 +105,4 @@ downloads/
 # This is not needed in the top-level repo and can be large, so we ignore it here.
 # The source files for the customer site are still included in the repo and published as expected, since we only ignore the build output folder.
 /site-user/site/
+Avbilder.code-workspace
