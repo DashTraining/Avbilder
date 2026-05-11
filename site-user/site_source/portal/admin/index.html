@@ -1,0 +1,19 @@
+---
+layout: default
+title: Studio admin
+description: Avbilder admin tools have moved to the separate App Service admin portal.
+permalink: /portal/admin/
+---
+<section class="page-title narrow">
+  <p class="eyebrow">Admin portal</p>
+  <h1>Admin has moved</h1>
+  <p id="userStatus" class="lead">Checking sign-in state...</p>
+</section>
+
+<div class="status">
+  Studio administration now runs as a separate Azure App Service demo app with its own built-in authentication and admin allowlist.
+</div>
+
+<script>
+requireUser('#userStatus');
+</script>

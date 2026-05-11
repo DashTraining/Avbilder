@@ -1,0 +1,68 @@
+---
+layout: default
+title: Client portal
+description: Avbilder customer portal for registrations and private previews.
+permalink: /portal/
+---
+<section class="page-title">
+  <p class="eyebrow">Protected portal</p>
+  <h1>Client portal</h1>
+  <p id="signedInName" class="signed-in-line" hidden></p>
+</section>
+
+<div class="portal-actions">
+  <a class="button" href="/register/">Register another session</a>
+  <a class="button quiet" href="/.auth/logout">Sign out</a>
+</div>
+
+<div id="registrations" class="registration-list"></div>
+
+<script>
+loadPortal();
+
+async function loadPortal() {
+  const user = await currentUser();
+  const signedInName = document.getElementById('signedInName');
+  if (user) {
+    signedInName.hidden = false;
+    signedInName.textContent = `Signed in as ${userDisplayName(user)}`;
+  }
+  const response = await fetch('/api/registrations');
+  const el = document.getElementById('registrations');
+  if (!response.ok) {
+    el.innerHTML = `<div class="status error">${escapeHtml(await response.text())}</div>`;
+    return;
+  }
+  const registrations = await response.json();
+  if (!registrations.length) {
+    el.innerHTML = '<div class="status">No registrations found for this signed-in email address.</div>';
+    return;
+  }
+  el.innerHTML = registrations.map(item => `
+    <article class="registration-card">
+      <div>
+        <span class="session-meta">${escapeHtml(item.preferredDate || 'Date to be agreed')}</span>
+        <h2>${escapeHtml(item.sessionTitle || 'Session')}</h2>
+        <code>${escapeHtml(item.registrationId)}</code>
+      </div>
+      <dl class="status-grid">
+        <div><dt>Registration</dt><dd>${escapeHtml(formatRegistrationStatus(item.registrationStatus))}</dd></div>
+        <div><dt>Survey</dt><dd>${escapeHtml(item.surveyStatus || 'Not submitted')}</dd></div>
+        <div><dt>Preview status</dt><dd class="${item.previewStatus === 'Ready' ? 'ready' : ''}">${escapeHtml(formatPreviewStatus(item.previewStatus))}</dd></div>
+      </dl>
+      ${item.previewStatus === 'Ready' ? `<a class="button" href="/portal/previews/">Open previews</a>` : `<span class="muted">Previews will appear here when the studio publishes them.</span>`}
+    </article>
+  `).join('');
+}
+
+function formatPreviewStatus(value) {
+  if (value === 'Ready') return 'Previews ready';
+  if (value === 'PreviewsNotReady') return 'Previews not ready';
+  return 'Previews not ready';
+}
+
+function formatRegistrationStatus(value) {
+  if (!value) return 'Needs Approval';
+  return value;
+}
+</script>

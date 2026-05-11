@@ -1,0 +1,11 @@
+title: Avbilder
+email: studio@avbilder.no
+description: >-
+  Portrait, family, and small-business photography in Norway with simple session registration and private previews.
+baseurl: ""
+url: "https://www.avbilder.no"
+markdown: kramdown
+permalink: pretty
+exclude:
+  - Gemfile
+  - Gemfile.lock

@@ -1,0 +1,139 @@
+---
+layout: default
+title: Register for a session
+description: Register for an Avbilder photography session and submit a short pre-session survey.
+permalink: /register/
+---
+<section class="page-title narrow">
+  <p class="eyebrow">Registration</p>
+  <h1>Register for a photo session</h1>
+  <p class="lead">This public form captures the customer request and the short survey the photographer needs before the shoot.</p>
+</section>
+
+<form id="registrationForm" class="form-card">
+  <div class="form-grid">
+    <label>Session type
+      <select name="sessionId" required>
+        <option value="portrait">Portrait session</option>
+        <option value="family">Family mini-session</option>
+        <option value="business">Business headshots</option>
+      </select>
+    </label>
+    <label>Preferred date
+      <input name="preferredDate" type="date">
+    </label>
+  </div>
+
+  <div class="form-grid">
+    <label>Your name <input name="attendeeName" autocomplete="name" required></label>
+    <label>Email <input name="email" type="email" autocomplete="email" required></label>
+  </div>
+
+  <label>Phone <input name="phone" autocomplete="tel"></label>
+
+  <fieldset>
+    <legend>Pre-session survey</legend>
+    <div class="form-grid">
+      <label>Preferred style
+        <select name="preferredStyle">
+          <option>Natural</option>
+          <option>Editorial</option>
+          <option>Corporate</option>
+          <option>Warm family style</option>
+        </select>
+      </label>
+      <label>Participants <input name="participantsCount" type="number" min="1" value="1"></label>
+    </div>
+    <label>Usage purpose <input name="usagePurpose" placeholder="LinkedIn, family album, company website"></label>
+    <label>Notes <textarea name="notes" placeholder="Anything that will help the session feel easy"></textarea></label>
+  </fieldset>
+
+  <div class="form-actions">
+    <button type="submit">Submit registration</button>
+    <span id="registrationActionNote" class="muted" aria-live="polite"></span>
+  </div>
+</form>
+<div id="registrationStatus" aria-live="polite" hidden></div>
+
+<script>
+const params = new URLSearchParams(location.search);
+const requestedSession = params.get('session');
+if (requestedSession) {
+  const select = document.querySelector('select[name="sessionId"]');
+  if ([...select.options].some(option => option.value === requestedSession)) {
+    select.value = requestedSession;
+  }
+}
+
+currentUser().then(user => {
+  const email = userDisplayName(user);
+  const input = document.querySelector('input[name="email"]');
+  if (email && email.includes('@') && input && !input.value) {
+    input.value = email;
+  }
+});
+
+let registrationSubmitting = false;
+
+function describeConfirmationEmail(email) {
+  const status = email?.status || 'Unknown';
+  if (status === 'Succeeded') {
+    return 'Confirmation email sent.';
+  }
+  if (status === 'Skipped') {
+    return 'Confirmation email skipped because ACS email settings are not configured.';
+  }
+  if (status === 'Failed') {
+    return `Confirmation email failed: ${email?.message || 'unknown error'}`;
+  }
+  return `Confirmation email status: ${status}.`;
+}
+
+document.getElementById('registrationForm').addEventListener('submit', async (ev) => {
+  ev.preventDefault();
+  if (registrationSubmitting) return;
+
+  const form = ev.target;
+  const submitButton = form.querySelector('button[type="submit"]');
+  const actionNote = document.getElementById('registrationActionNote');
+  const status = document.getElementById('registrationStatus');
+
+  registrationSubmitting = true;
+  submitButton.disabled = true;
+  submitButton.textContent = 'Submitting...';
+  actionNote.textContent = 'Saving the registration and sending the confirmation email.';
+  status.hidden = false;
+  status.className = 'status';
+  status.textContent = 'Please wait. Your registration is being created.';
+
+  try {
+    const data = Object.fromEntries(new FormData(form).entries());
+    data.participantsCount = Number(data.participantsCount || 1);
+    const response = await fetch('/api/registrations', { method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify(data)});
+    if (!response.ok) {
+      showStatus('registrationStatus', await response.text(), true);
+      return;
+    }
+
+    const result = await response.json();
+    const emailMessage = describeConfirmationEmail(result.confirmationEmail);
+    status.className = 'status success';
+    status.innerHTML = `
+      <strong>Registration submitted. Needs approval.</strong>
+      <span>${escapeHtml(emailMessage)}</span>
+      <span>Save this Registration ID:</span>
+      <code class="registration-id">${escapeHtml(result.registrationId)}</code>
+      <span>When you sign in to the Client portal, this session will appear with its approval status and preview status.</span>
+      <a class="button" href="/portal/">Open Client portal</a>
+    `;
+    form.reset();
+  } catch (err) {
+    showStatus('registrationStatus', err?.message || 'Registration failed.', true);
+  } finally {
+    registrationSubmitting = false;
+    submitButton.disabled = false;
+    submitButton.textContent = 'Submit registration';
+    actionNote.textContent = '';
+  }
+});
+</script>
