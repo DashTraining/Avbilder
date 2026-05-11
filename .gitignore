@@ -99,6 +99,7 @@ downloads/
 # Local nested repository used for publishing the customer site to Azure DevOps.
 # Keep this metadata locally, but do not publish it from the top-level repo.
 /site-user/.git/
+/site-user/scripts/manage-git.ps1
 
 # Local build output for the customer site, which is published separately from the top-level repo.
 # This is not needed in the top-level repo and can be large, so we ignore it here.

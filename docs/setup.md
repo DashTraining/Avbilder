@@ -166,6 +166,26 @@ For an infrastructure pipeline, give the managed identity subscription `Contribu
 
 ## 6. Build and deploy customer site/API
 
+When this workshop package is shared from the top-level GitHub repository, `site-user` is included as normal files, not as an embedded Git repository. Before using Azure DevOps deployment, create or attach a separate Azure DevOps repo for `site-user`:
+
+```powershell
+Set-Location <drive>:\Avbilder\site-user
+git init
+git add .
+git commit -m "Initial site-user deployment source"
+git branch -M main
+git remote add origin "<your Azure DevOps site-user repo URL>"
+git push -u origin main
+```
+
+If you already have a `site-user` DevOps repo and want to inspect its old history first, fetch it without overwriting the workshop files:
+
+```powershell
+git remote add origin "<your Azure DevOps site-user repo URL>"
+git fetch origin
+git log --oneline --decorate --all -10
+```
+
 Build the static site locally with my Hyde PowerShell module:
 
 ```powershell

@@ -36,6 +36,18 @@ For this demo, admin list views use table scans because the demo dataset is smal
 
 ## User site deployment
 
+The top-level GitHub package treats `site-user` as normal files. Azure DevOps deployment still expects `site-user` to be its own Git repository, so initialize it or connect it to your own DevOps repo before creating the pipeline:
+
+```powershell
+Set-Location <drive>:\Avbilder\site-user
+git init
+git add .
+git commit -m "Initial site-user deployment source"
+git branch -M main
+git remote add origin "<your Azure DevOps site-user repo URL>"
+git push -u origin main
+```
+
 Build the static site locally:
 
 ```powershell
