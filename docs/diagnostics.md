@@ -26,6 +26,8 @@ ACSEmailStatusUpdateOperational
 
 The app also writes email attempts to the `NotificationLog` table. Check that first when email behavior is unclear.
 
+For a demo-friendly monitoring flow, KQL queries, and alert rules, see [Monitoring demo pack](monitoring-demo.md).
+
 ## Admin authentication
 
 If admin auth fails, open:

@@ -1,0 +1,327 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.43.8.12551",
+      "templateHash": "13478325065500267450"
+    }
+  },
+  "parameters": {
+    "projectShortName": {
+      "type": "string",
+      "defaultValue": "avbilder",
+      "metadata": {
+        "description": "Short project name used in alert names and tags."
+      }
+    },
+    "applicationInsightsName": {
+      "type": "string",
+      "defaultValue": "appi-avbilder-weu",
+      "metadata": {
+        "description": "Application Insights component name."
+      }
+    },
+    "logAnalyticsWorkspaceName": {
+      "type": "string",
+      "defaultValue": "log-avbilder-weu",
+      "metadata": {
+        "description": "Log Analytics workspace name."
+      }
+    },
+    "adminAppServiceName": {
+      "type": "string",
+      "defaultValue": "app-avbilder-admin-weu",
+      "metadata": {
+        "description": "Admin App Service name."
+      }
+    },
+    "dataStorageAccountName": {
+      "type": "string",
+      "defaultValue": "stavbilderdataweu01",
+      "metadata": {
+        "description": "Data storage account name."
+      }
+    },
+    "alertsEnabled": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Enable the alert rules. Set false if you only want them visible as disabled demo rules."
+      }
+    },
+    "actionGroupResourceIds": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "Optional action group resource IDs. Leave empty for portal-only demo rules."
+      }
+    },
+    "adminCpuTimeSecondsPerHourWarning": {
+      "type": "int",
+      "defaultValue": 600,
+      "metadata": {
+        "description": "Admin App Service CPU-time warning threshold in seconds per hour. Free plans have tight daily CPU quotas, so this is deliberately low for the demo."
+      }
+    },
+    "adminRequestsPerHourWarning": {
+      "type": "int",
+      "defaultValue": 200,
+      "metadata": {
+        "description": "Admin App Service request-count warning threshold per hour."
+      }
+    },
+    "appInsightsRequestsPerHourWarning": {
+      "type": "int",
+      "defaultValue": 250,
+      "metadata": {
+        "description": "Application Insights request-count warning threshold per hour."
+      }
+    },
+    "previewBlobCapacityBytesWarning": {
+      "type": "int",
+      "defaultValue": 52428800,
+      "metadata": {
+        "description": "Preview Blob capacity warning threshold in bytes. This is a demo budget, not an Azure free-tier limit."
+      }
+    },
+    "logAnalyticsBillableMbPerDayWarning": {
+      "type": "int",
+      "defaultValue": 25,
+      "metadata": {
+        "description": "Log Analytics billable ingestion warning threshold in MB over 24 hours. This is a demo budget."
+      }
+    }
+  },
+  "variables": {
+    "tags": {
+      "Project": "[parameters('projectShortName')]",
+      "Demo": "monitoring",
+      "ManagedBy": "Bicep"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Insights/metricAlerts",
+      "apiVersion": "2018-03-01",
+      "name": "[format('{0}-demo-admin-cpu-time', parameters('projectShortName'))]",
+      "location": "global",
+      "tags": "[variables('tags')]",
+      "properties": {
+        "copy": [
+          {
+            "name": "actions",
+            "count": "[length(parameters('actionGroupResourceIds'))]",
+            "input": {
+              "actionGroupId": "[parameters('actionGroupResourceIds')[copyIndex('actions')]]"
+            }
+          }
+        ],
+        "description": "Demo guardrail: admin App Service CPU time is high for a Free-plan workload.",
+        "severity": 3,
+        "enabled": "[parameters('alertsEnabled')]",
+        "scopes": [
+          "[resourceId('Microsoft.Web/sites', parameters('adminAppServiceName'))]"
+        ],
+        "evaluationFrequency": "PT5M",
+        "windowSize": "PT1H",
+        "autoMitigate": true,
+        "targetResourceType": "Microsoft.Web/sites",
+        "targetResourceRegion": "[resourceGroup().location]",
+        "criteria": {
+          "odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
+          "allOf": [
+            {
+              "name": "CpuTime",
+              "metricName": "CpuTime",
+              "metricNamespace": "Microsoft.Web/sites",
+              "operator": "GreaterThan",
+              "timeAggregation": "Total",
+              "threshold": "[parameters('adminCpuTimeSecondsPerHourWarning')]",
+              "criterionType": "StaticThresholdCriterion"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Insights/metricAlerts",
+      "apiVersion": "2018-03-01",
+      "name": "[format('{0}-demo-admin-request-volume', parameters('projectShortName'))]",
+      "location": "global",
+      "tags": "[variables('tags')]",
+      "properties": {
+        "copy": [
+          {
+            "name": "actions",
+            "count": "[length(parameters('actionGroupResourceIds'))]",
+            "input": {
+              "actionGroupId": "[parameters('actionGroupResourceIds')[copyIndex('actions')]]"
+            }
+          }
+        ],
+        "description": "Demo guardrail: admin App Service request volume is noisy for a small Free-plan back office.",
+        "severity": 3,
+        "enabled": "[parameters('alertsEnabled')]",
+        "scopes": [
+          "[resourceId('Microsoft.Web/sites', parameters('adminAppServiceName'))]"
+        ],
+        "evaluationFrequency": "PT5M",
+        "windowSize": "PT1H",
+        "autoMitigate": true,
+        "targetResourceType": "Microsoft.Web/sites",
+        "targetResourceRegion": "[resourceGroup().location]",
+        "criteria": {
+          "odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
+          "allOf": [
+            {
+              "name": "Requests",
+              "metricName": "Requests",
+              "metricNamespace": "Microsoft.Web/sites",
+              "operator": "GreaterThan",
+              "timeAggregation": "Total",
+              "threshold": "[parameters('adminRequestsPerHourWarning')]",
+              "criterionType": "StaticThresholdCriterion"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Insights/metricAlerts",
+      "apiVersion": "2018-03-01",
+      "name": "[format('{0}-demo-appi-request-volume', parameters('projectShortName'))]",
+      "location": "global",
+      "tags": "[variables('tags')]",
+      "properties": {
+        "copy": [
+          {
+            "name": "actions",
+            "count": "[length(parameters('actionGroupResourceIds'))]",
+            "input": {
+              "actionGroupId": "[parameters('actionGroupResourceIds')[copyIndex('actions')]]"
+            }
+          }
+        ],
+        "description": "Demo guardrail: Application Insights request telemetry volume is getting noisy.",
+        "severity": 3,
+        "enabled": "[parameters('alertsEnabled')]",
+        "scopes": [
+          "[resourceId('Microsoft.Insights/components', parameters('applicationInsightsName'))]"
+        ],
+        "evaluationFrequency": "PT5M",
+        "windowSize": "PT1H",
+        "autoMitigate": true,
+        "targetResourceType": "Microsoft.Insights/components",
+        "targetResourceRegion": "[resourceGroup().location]",
+        "criteria": {
+          "odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
+          "allOf": [
+            {
+              "name": "RequestCount",
+              "metricName": "requests/count",
+              "metricNamespace": "Microsoft.Insights/components",
+              "operator": "GreaterThan",
+              "timeAggregation": "Count",
+              "threshold": "[parameters('appInsightsRequestsPerHourWarning')]",
+              "criterionType": "StaticThresholdCriterion"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Insights/metricAlerts",
+      "apiVersion": "2018-03-01",
+      "name": "[format('{0}-demo-preview-blob-capacity', parameters('projectShortName'))]",
+      "location": "global",
+      "tags": "[variables('tags')]",
+      "properties": {
+        "copy": [
+          {
+            "name": "actions",
+            "count": "[length(parameters('actionGroupResourceIds'))]",
+            "input": {
+              "actionGroupId": "[parameters('actionGroupResourceIds')[copyIndex('actions')]]"
+            }
+          }
+        ],
+        "description": "Demo guardrail: private preview Blob capacity crossed the small demo budget.",
+        "severity": 3,
+        "enabled": "[parameters('alertsEnabled')]",
+        "scopes": [
+          "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('dataStorageAccountName'), 'default')]"
+        ],
+        "evaluationFrequency": "PT1H",
+        "windowSize": "PT1H",
+        "autoMitigate": true,
+        "targetResourceType": "Microsoft.Storage/storageAccounts/blobServices",
+        "targetResourceRegion": "[resourceGroup().location]",
+        "criteria": {
+          "odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
+          "allOf": [
+            {
+              "name": "BlobCapacity",
+              "metricName": "BlobCapacity",
+              "metricNamespace": "Microsoft.Storage/storageAccounts/blobServices",
+              "operator": "GreaterThan",
+              "timeAggregation": "Average",
+              "threshold": "[parameters('previewBlobCapacityBytesWarning')]",
+              "criterionType": "StaticThresholdCriterion"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Insights/scheduledQueryRules",
+      "apiVersion": "2022-06-15",
+      "name": "[format('{0}-demo-log-ingestion-budget', parameters('projectShortName'))]",
+      "location": "[resourceGroup().location]",
+      "tags": "[variables('tags')]",
+      "properties": {
+        "displayName": "[format('{0} demo Log Analytics ingestion budget', parameters('projectShortName'))]",
+        "description": "Demo guardrail: billable Log Analytics ingestion crossed the small daily demo budget.",
+        "severity": 3,
+        "enabled": "[parameters('alertsEnabled')]",
+        "scopes": [
+          "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]"
+        ],
+        "evaluationFrequency": "PT1H",
+        "windowSize": "P1D",
+        "autoMitigate": true,
+        "criteria": {
+          "allOf": [
+            {
+              "query": "Usage\n| where TimeGenerated > ago(24h)\n| where tostring(IsBillable) =~ \"true\"\n| summarize BillableMB = sum(Quantity)\n",
+              "timeAggregation": "Total",
+              "metricMeasureColumn": "BillableMB",
+              "operator": "GreaterThan",
+              "threshold": "[parameters('logAnalyticsBillableMbPerDayWarning')]",
+              "failingPeriods": {
+                "numberOfEvaluationPeriods": 1,
+                "minFailingPeriodsToAlert": 1
+              }
+            }
+          ]
+        },
+        "actions": {
+          "actionGroups": "[parameters('actionGroupResourceIds')]"
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "alertRuleNames": {
+      "type": "array",
+      "value": [
+        "[format('{0}-demo-admin-cpu-time', parameters('projectShortName'))]",
+        "[format('{0}-demo-admin-request-volume', parameters('projectShortName'))]",
+        "[format('{0}-demo-appi-request-volume', parameters('projectShortName'))]",
+        "[format('{0}-demo-preview-blob-capacity', parameters('projectShortName'))]",
+        "[format('{0}-demo-log-ingestion-budget', parameters('projectShortName'))]"
+      ]
+    }
+  }
+}
