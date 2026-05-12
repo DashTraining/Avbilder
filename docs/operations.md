@@ -34,11 +34,13 @@ The admin portal:
 
 For this demo, admin list views use table scans because the demo dataset is small. Production would add index tables.
 
+## JPEG upload script
+
+The script `infra/repair/upload-preview-set.ps1` remains as a fallback to upload preview JPEGs when the admin portal is unavailable.
+
 ## Repair scripts
 
-The normal setup uses only the top-level scripts in `infra/scripts`. Lower-level repair tools live under `infra/scripts/repair` and are called by `configure-demo-services.ps1` when needed. Use them directly only when repairing one specific subsystem.
-
-The legacy `repair/upload-preview-set.ps1` remains as a fallback to upload preview JPEGs when the admin portal is unavailable.
+A number of lower-level repair tools live under `infra/scripts/repair` and are called by `configure-demo-services.ps1` when needed. Use them directly only when repairing one specific subsystem.
 
 ## Related docs
 
