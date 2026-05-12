@@ -178,22 +178,27 @@ git remote add origin "<your Azure DevOps site-user repo URL>"
 git push -u origin main
 ```
 
-If you already have a `site-user` DevOps repo and want to inspect its old history first, fetch it without overwriting the workshop files:
+If you already have a `site-user` DevOps repo (like from a previous demo build) and want to maintain its old history, fetch it without overwriting the local files:
 
 ```powershell
 git remote add origin "<your Azure DevOps site-user repo URL>"
 git fetch origin
-git log --oneline --decorate --all -10
 ```
 
-Build the static site locally with my Hyde PowerShell module:
+The customer site is designed to be built with Jekyll, a popular static site builder. But that requires Ruby. I created a PowerShell module that performs the same task but only has a few prerequisites which are all internal to PowerShell. You will need:
+
+* https://www.powershellgallery.com/packages/powershell-yaml/
+* https://www.powershellgallery.com/packages/PowerLiquid/
+* https://www.powershellgallery.com/packages/Hyde/
+
+After installing those modules, build the static site locally with my Hyde PowerShell module:
 
 ```powershell
 Set-Location <drive>:\Avbilder\site-user
 .\scripts\build-site.ps1
 ```
 
-(or use Jekyll, which requires Ruby)
+(or use Jekyll, if you already have access to it)
 
 Deploy with:
 
@@ -210,23 +215,17 @@ The pipeline expects:
 
 ## 7. Deploy admin portal
 
-Local deployment:
+Deployment using a zip upload directly to the App Service:
 
 ```powershell
 Set-Location <drive>:\Avbilder\infra
 .\scripts\deploy-admin-app.ps1
 ```
 
-Pipeline deployment:
+Optionally, you can create a DevOps Pipeline deployment. If you decide to create a repo for this, you can use this definition:
 
 ```text
 site-admin/azure-pipelines.yml
-```
-
-Admin URL:
-
-```text
-https://app-avbilder-admin-weu.azurewebsites.net
 ```
 
 ## 8. Verify
@@ -243,12 +242,10 @@ Expected:
 - ACS Email domain/SPF/DKIM/DMARC are verified.
 - Admin App Service auth platform is enabled.
 
-Browser checks:
+Browser checks (based on the demo naming):
 
 ```text
 https://www.avbilder.no
-https://www.avbilder.no/register/
-https://www.avbilder.no/portal/
 https://app-avbilder-admin-weu.azurewebsites.net
 ```
 
