@@ -120,7 +120,7 @@ union isfuzzy=true
         or tostring(column_ifexists("Resource", "")) contains adminApp
     | where MetricName == "CpuTime"
     | summarize Used = sum(todouble(Total)) / 60.0
-    | project Guardrail = "REAL LIMIT - App Service Free CPU/day", Used = todouble(Used), Limit = appServiceCpuMinutesPerDayLimit, Unit = "minutes/day"
+    | project Guardrail = "App Service Free CPU/day", Used = todouble(Used), Limit = appServiceCpuMinutesPerDayLimit, Unit = "minutes/day"
 ),
 (
     AzureMetrics
@@ -130,7 +130,7 @@ union isfuzzy=true
     | where MetricName == "CpuTime"
     | summarize Used = sum(todouble(Total)) / 60.0 by bin(TimeGenerated, 5m)
     | summarize Used = max(Used)
-    | project Guardrail = "REAL LIMIT - App Service Free CPU/5 min", Used = todouble(Used), Limit = appServiceCpuShortMinutesPer5mLimit, Unit = "minutes/5 min"
+    | project Guardrail = "App Service Free CPU/5 min", Used = todouble(Used), Limit = appServiceCpuShortMinutesPer5mLimit, Unit = "minutes/5 min"
 ),
 (
     AzureMetrics
@@ -139,7 +139,7 @@ union isfuzzy=true
         or tostring(column_ifexists("Resource", "")) contains adminApp
     | where MetricName in ("FileSystemUsage", "FileSystemUsageBytes")
     | summarize Used = max(todouble(coalesce(Average, Total)))
-    | project Guardrail = "REAL LIMIT - App Service Free filesystem", Used = todouble(Used), Limit = appServiceStorageBytesLimit, Unit = "bytes"
+    | project Guardrail = "App Service Free filesystem", Used = todouble(Used), Limit = appServiceStorageBytesLimit, Unit = "bytes"
 ),
 (
     AzureMetrics
@@ -148,13 +148,13 @@ union isfuzzy=true
         or tostring(column_ifexists("Resource", "")) contains adminApp
     | where MetricName in ("BytesSent", "IoBytesSent")
     | summarize Used = sum(todouble(Total))
-    | project Guardrail = "REAL LIMIT - App Service Free outbound/day", Used = todouble(Used), Limit = appServiceBandwidthBytesPerDayLimit, Unit = "bytes/day"
+    | project Guardrail = "App Service Free outbound/day", Used = todouble(Used), Limit = appServiceBandwidthBytesPerDayLimit, Unit = "bytes/day"
 ),
 (
     datatable(Used:real, Limit:real, Unit:string, Guardrail:string)
     [
-        1.0, 10.0, "apps/subscription", "REAL LIMIT - Static Web Apps Free apps",
-        1.0, 2.0, "custom domains/app", "REAL LIMIT - Static Web Apps Free custom domains"
+        1.0, 10.0, "apps/subscription", "Static Web Apps Free apps",
+        1.0, 2.0, "custom domains/app", "Static Web Apps Free custom domains"
     ]
     | project Guardrail, Used = todouble(Used), Limit = todouble(Limit), Unit
 ),
@@ -164,7 +164,7 @@ union isfuzzy=true
     | where MetricName in ("Bandwidth", "DataOut")
     | where tostring(column_ifexists("_ResourceId", "")) has "staticSites"
     | summarize Used = sum(todouble(Total))
-    | project Guardrail = "REAL LIMIT - Static Web Apps Free bandwidth/month", Used = todouble(Used), Limit = staticWebAppsFreeMonthlyBandwidthBytesLimit, Unit = "bytes/month"
+    | project Guardrail = "Static Web Apps Free bandwidth/month", Used = todouble(Used), Limit = staticWebAppsFreeMonthlyBandwidthBytesLimit, Unit = "bytes/month"
 ),
 (
     AzureMetrics
@@ -174,7 +174,7 @@ union isfuzzy=true
     | where ResourceName == storageAccount or ResourcePath contains storageAccount
     | where MetricName == "BlobCapacity"
     | summarize Used = max(todouble(Average))
-    | project Guardrail = "REAL LIMIT - Storage account capacity", Used = todouble(Used), Limit = storageAccountCapacityBytesLimit, Unit = "bytes"
+    | project Guardrail = "Storage account capacity", Used = todouble(Used), Limit = storageAccountCapacityBytesLimit, Unit = "bytes"
 ),
 (
     AzureMetrics
@@ -185,7 +185,7 @@ union isfuzzy=true
     | where MetricName == "Transactions"
     | summarize Used = sum(todouble(Total)) by bin(TimeGenerated, 1m)
     | summarize Used = max(Used) / 60.0
-    | project Guardrail = "REAL LIMIT - Storage account request rate", Used = todouble(Used), Limit = storageAccountRequestsPerSecondLimitWestEurope, Unit = "requests/second"
+    | project Guardrail = "Storage account request rate", Used = todouble(Used), Limit = storageAccountRequestsPerSecondLimitWestEurope, Unit = "requests/second"
 ),
 (
     AzureMetrics
@@ -194,21 +194,21 @@ union isfuzzy=true
     | where MetricName in ("TotalJob", "TotalJobs", "Jobs")
     | summarize Used = sum(todouble(Total)) by bin(TimeGenerated, 30s)
     | summarize Used = max(Used)
-    | project Guardrail = "REAL LIMIT - Automation new jobs/30 sec", Used = todouble(Used), Limit = automationNewJobsPer30SecondsLimit, Unit = "jobs/30 sec"
+    | project Guardrail = "Automation new jobs/30 sec", Used = todouble(Used), Limit = automationNewJobsPer30SecondsLimit, Unit = "jobs/30 sec"
 ),
 (
     ACSEmailSendMailOperational
     | where TimeGenerated > ago(lookback)
     | summarize Used = todouble(count()) by bin(TimeGenerated, 1m)
     | summarize Used = max(Used)
-    | project Guardrail = "REAL LIMIT - ACS Email custom domain send/min", Used = todouble(Used), Limit = acsCustomDomainSendPerMinuteLimit, Unit = "emails/min"
+    | project Guardrail = "ACS Email custom domain send/min", Used = todouble(Used), Limit = acsCustomDomainSendPerMinuteLimit, Unit = "emails/min"
 ),
 (
     ACSEmailSendMailOperational
     | where TimeGenerated > ago(lookback)
     | summarize Used = todouble(count()) by bin(TimeGenerated, 1h)
     | summarize Used = max(Used)
-    | project Guardrail = "REAL LIMIT - ACS Email custom domain send/hour", Used = todouble(Used), Limit = acsCustomDomainSendPerHourLimit, Unit = "emails/hour"
+    | project Guardrail = "ACS Email custom domain send/hour", Used = todouble(Used), Limit = acsCustomDomainSendPerHourLimit, Unit = "emails/hour"
 )
 | summarize Used = sum(Used), Limit = max(Limit), Unit = take_any(Unit) by Guardrail
 | where isnotnull(Used) and isnotnull(Limit) and Limit > 0
